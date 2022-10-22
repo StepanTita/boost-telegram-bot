@@ -49,6 +49,6 @@ func New(path string) Config {
 		Logger:    NewLogger(cfg.LogLevel),
 		Listener:  NewListener(cfg.TelegramApiToken, cfg.Debug),
 		Generator: NewGenerator(cfg.Generator.OpenAIApiToken, cfg.Generator.Models),
-		Templator: NewTemplator(cfg.TemplatesDir),
+		Templator: NewTemplator(),
 	}
 }

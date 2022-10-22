@@ -1,9 +1,8 @@
 package config
 
 import (
+	"embed"
 	"io/fs"
-	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -17,16 +16,20 @@ type templator struct {
 	templates map[string]string
 }
 
+//go:embed templates/*
+var embedTemplates embed.FS
+
+// TODO: remove templates dir
 func NewTemplator(templatesDir string) Templator {
 	templates := make(map[string]string)
-	err := filepath.WalkDir(templatesDir, func(path string, d fs.DirEntry, err error) error {
+	err := fs.WalkDir(embedTemplates, ".", func(path string, d fs.DirEntry, err error) error {
 		if d.IsDir() {
 			return nil
 		}
 
 		// expect name.command.tmpl
 		commandName := strings.Split(d.Name(), ".")[0]
-		rawContent, err := os.ReadFile(path)
+		rawContent, err := fs.ReadFile(embedTemplates, path)
 		if err != nil {
 			return errors.Wrap(err, "failed to read file")
 		}
@@ -46,4 +49,3 @@ func NewTemplator(templatesDir string) Templator {
 func (l templator) Template(name string) string {
 	return l.templates[name]
 }
-
