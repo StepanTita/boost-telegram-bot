@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  boost-telegram-bot:
+    build: .
+    image: boost-telegram-bot:latest
+    container_name: boost-api
+    networks:
+      - default
+    volumes:
+      - type: bind
+        source: /boost-telegram-bot/config.dev.yaml
+        target: /config.yaml
+    environment:
+      CONFIG: /config.yaml
+    command: run
